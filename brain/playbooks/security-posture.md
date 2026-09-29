@@ -3,12 +3,9 @@ schemaVersion: 1
 id: security-posture
 type: flow
 domain: api
-title: Security posture — one public, unauthenticated runtime endpoint that spends LLM and Tavily credit; secrets server-only; untrusted tool output rendered defensively
-summary: Trust boundary is app/api/copilotkit/[[...slug]] (GET/POST, no auth, no rate limit, no middleware); env keys are read only server-side; client-supplied agent context and web-search results are untrusted and rendered without raw HTML, with an http/https link allow-list
+title: "Security posture — one public, unauthenticated runtime endpoint that spends LLM and Tavily credit; secrets server-only; untrusted tool output rendered defensively"
+summary: "Trust boundary is app/api/copilotkit/[[...slug]] (GET/POST, no auth, no rate limit, no middleware); env keys are read only server-side; client-supplied agent context and web-search results are untrusted and rendered without raw HTML, with an http/https link allow-list"
 links: [runtime-endpoint-path-contract, env-and-integrations, agent-context-contract, tool-result-rendering-convention, builtin-agent-runtime-convention, chat-turn-flow, repo-toolbox-inventory]
-absent: getServerSession
-absent: export function middleware
-absent: rateLimit
 absent: dangerouslySetInnerHTML
 cites:
   - app/api/copilotkit/[[...slug]]/route.ts:41 :: export const GET = handler
@@ -46,8 +43,8 @@ only inside the server route; the LLM key is consumed inside the runtime library
 `NEXT_PUBLIC_` vars exist, so nothing is inlined into the client
 ([env-and-integrations](/brain/rules/env-and-integrations.md)). `.env*` is gitignored.
 Tooling: `.mcp.json` references `RAFA_MCP_KEY` by name; the value is supplied from a
-local, uncommitted Claude settings file — keep it out of git (it is ignored today via the
-developer's global gitignore, not this repo's `.gitignore`).
+local, uncommitted Claude settings file — keep it out of git (`.claude/settings.local.json`
+is ignored by this repo's own `.gitignore`).
 
 **Untrusted inputs to the model.** The agent context (`useAgentContext` payloads) is
 constructed in the browser and sent with each request — a caller can send arbitrary
@@ -65,3 +62,4 @@ The CopilotKit dev console is disabled (`showDevConsole={false}`).
 `@copilotkit/runtime`, `@tavily/core`, `zod`, `next`; everything else is client-bundle
 or unused (`@tremor/react`, `react-hook-form`, `@radix-ui/*`, `date-fns`,
 `react-day-picker` are declared but imported nowhere).
+

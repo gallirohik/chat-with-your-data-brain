@@ -21,11 +21,9 @@ cites:
   - package.json:14 :: "@copilotkit/react-core": "1.75.0"
   - package.json:15 :: "@copilotkit/runtime": "1.75.0"
   - package.json:27 :: "next": "16.1.7"
-  - package.json:38 :: "@rafinery/cli": "0.20.0"
   - next.config.ts:5 :: allowedDevOrigins
   - next.config.ts:7 :: path.resolve(__dirname, "../../..")
   - tsconfig.json:7 :: "strict": true
-  - rafa.json:15 :: "cli": "0.21.0"
   - readme-runtime.test.mjs:34 :: - pnpm$
 ---
 # Build & dependency convention
@@ -55,9 +53,8 @@ and committed `pnpm-lock.yaml`).
   or remove it.
 - `pnpm lint` runs `oxlint`, but oxlint is not a dependency (no `oxlint@` in the lockfile —
   declared `absent`); it only works with a global install.
-- `@rafinery/cli` devDependency is `0.20.0` while `rafa.json` records CLI `0.21.0`.
-- **Unused runtime dependencies:** `@tremor/react`, `react-hook-form`, `@hookform/resolvers`,
-  `@radix-ui/*`, `date-fns`, `react-day-picker`, `class-variance-authority` are declared but
-  imported nowhere (import forms declared `absent`, re-grepped every run) — leftovers of
-  the shadcn/Tremor template. Don't read their presence as "the house form/date library".
+- **Unused runtime dependencies:** `react-hook-form`, `@hookform/resolvers`, `@radix-ui/*`,
+  `date-fns`, `react-day-picker`, `class-variance-authority` are declared but imported nowhere
+  (import forms declared `absent`, re-grepped every run) — leftovers of the shadcn template.
+  Don't read their presence as "the house form/date library".
 - `allowedDevOrigins: ["127.0.0.1"]` exists so the dev server accepts requests via the IP.
