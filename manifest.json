@@ -1,0 +1,550 @@
+{
+  "schemaVersion": 1,
+  "mode": "branch",
+  "codeSha": "69c02f41b53acaf3e8b3771103cc04036522ba4e",
+  "branch": "chore/improve-ledger",
+  "provenance": {
+    "agentCommits": 0
+  },
+  "base": {
+    "brainSha": "31a001b8ffeeefed212be67855c60ffe88ac0d29"
+  },
+  "notes": [
+    {
+      "id": "security-posture",
+      "kind": "playbook",
+      "type": "flow",
+      "domain": "api",
+      "title": "Security posture — one public, unauthenticated runtime endpoint that spends LLM and Tavily credit; secrets server-only; untrusted tool output rendered defensively",
+      "summary": "Trust boundary is app/api/copilotkit/[[...slug]] (GET/POST, no auth, no rate limit, no middleware); env keys are read only server-side; client-supplied agent context and web-search results are untrusted and rendered without raw HTML, with an http/https link allow-list",
+      "links": [
+        "runtime-endpoint-path-contract",
+        "env-and-integrations",
+        "agent-context-contract",
+        "tool-result-rendering-convention",
+        "builtin-agent-runtime-convention",
+        "chat-turn-flow",
+        "repo-toolbox-inventory"
+      ],
+      "cites": [
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "41",
+          "token": "export const GET = handler"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "42",
+          "token": "export const POST = handler"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "19",
+          "token": "process.env.TAVILY_API_KEY"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "25",
+          "token": "process.env.COPILOTKIT_MODEL"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "28",
+          "token": "maxSteps: 5"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "40",
+          "token": "useAgentContext({"
+        },
+        {
+          "file": "components/generative-ui/SearchResults.tsx",
+          "line": "37",
+          "token": "isSafeSearchResultUrl"
+        },
+        {
+          "file": "components/generative-ui/SearchResults.tsx",
+          "line": "101",
+          "token": "rel=\"noreferrer\""
+        },
+        {
+          "file": "app/layout.tsx",
+          "line": "35",
+          "token": "showDevConsole={false}"
+        },
+        {
+          "file": ".gitignore",
+          "line": "34",
+          "token": ".env*"
+        },
+        {
+          "file": ".mcp.json",
+          "line": "7",
+          "token": "RAFA_MCP_KEY"
+        }
+      ],
+      "path": "brain/playbooks/security-posture.md",
+      "provenance": {
+        "baseBrainSha": "31a001b8ffeeefed212be67855c60ffe88ac0d29"
+      }
+    }
+  ],
+  "improvements": [
+    {
+      "id": "copilotkit-endpoint-unauthenticated",
+      "priority": "P1",
+      "category": "security",
+      "lens": "security",
+      "status": "open",
+      "title": "Public /api/copilotkit accepts anonymous POSTs that spend LLM and Tavily credit",
+      "summary": "The only server route runs the agent and Tavily search with server keys for any caller - no auth, rate limit or origin check; only maxSteps bounds one turn",
+      "fix": "Before any deployment beyond a local demo, wrap the handler with an auth or signed-session check plus a per-IP rate limit (or put the deployment behind platform protection); keep maxSteps as the per-turn bound",
+      "leverage": {
+        "impact": "high",
+        "effort": "medium"
+      },
+      "blastRadius": [],
+      "cites": [
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "42",
+          "token": "export const POST = handler"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "19",
+          "token": "process.env.TAVILY_API_KEY"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "28",
+          "token": "maxSteps: 5"
+        },
+        {
+          "file": "wfcms-data.json",
+          "line": "4",
+          "token": "live_demo"
+        }
+      ],
+      "path": "improve/improvements/copilotkit-endpoint-unauthenticated.md"
+    },
+    {
+      "id": "dark-mode-inert",
+      "priority": "P3",
+      "category": "product",
+      "lens": "product",
+      "status": "open",
+      "title": "Dark-mode tokens and dark: classes ship but nothing ever enables dark mode",
+      "summary": "globals.css defines a .dark token block and a dark custom variant, and components carry dark: classes, but no code adds the dark class and no theme library is installed",
+      "fix": "Decide: wire a toggle (or prefers-color-scheme) that sets the dark class, or delete the .dark block and dark: classes",
+      "leverage": {
+        "impact": "low",
+        "effort": "medium"
+      },
+      "blastRadius": [],
+      "cites": [
+        {
+          "file": "app/globals.css",
+          "line": "48",
+          "token": ".dark {"
+        },
+        {
+          "file": "app/globals.css",
+          "line": "5",
+          "token": "@custom-variant dark"
+        },
+        {
+          "file": "components/generative-ui/SearchResults.tsx",
+          "line": "55",
+          "token": "dark:bg-gray-800"
+        }
+      ],
+      "path": "improve/improvements/dark-mode-inert.md"
+    },
+    {
+      "id": "dead-user-info-module",
+      "priority": "P3",
+      "category": "architecture",
+      "lens": "architecture",
+      "status": "open",
+      "title": "lib/user-info.ts is imported by nothing",
+      "summary": "getUser and getUsers are leftover demo mock code with no importer; they suggest a user model the app does not have",
+      "fix": "Delete lib/user-info.ts",
+      "leverage": {
+        "impact": "low",
+        "effort": "low"
+      },
+      "blastRadius": [],
+      "cites": [
+        {
+          "file": "lib/user-info.ts",
+          "line": "1",
+          "token": "export const getUser"
+        }
+      ],
+      "path": "improve/improvements/dead-user-info-module.md"
+    },
+    {
+      "id": "hardcoded-conversion-rate-kpi",
+      "priority": "P2",
+      "category": "product",
+      "lens": "product",
+      "status": "open",
+      "title": "Conversion Rate KPI is a hard-coded constant presented as derived data",
+      "summary": "calculateConversionRate divides customers by customers*8.13, so it always shows about 12.3% - and that fabricated figure is shown as a KPI tile and fed to the agent as a metric",
+      "fix": "Either add a visitors series to the dataset and compute it, or relabel the tile and agent-context field as an assumed rate (or drop it)",
+      "leverage": {
+        "impact": "medium",
+        "effort": "low"
+      },
+      "blastRadius": [],
+      "cites": [
+        {
+          "file": "data/dashboard-data.ts",
+          "line": "225",
+          "token": "8.13"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "53",
+          "token": "conversionRate"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "110",
+          "token": "Conversion Rate"
+        }
+      ],
+      "path": "improve/improvements/hardcoded-conversion-rate-kpi.md"
+    },
+    {
+      "id": "lint-script-oxlint-missing",
+      "priority": "P2",
+      "category": "ops",
+      "lens": "ops",
+      "status": "open",
+      "title": "pnpm lint calls oxlint, which is not a dependency",
+      "summary": "The lint script runs oxlint . but oxlint is absent from package.json and the lockfile, so pnpm lint fails on a clean clone",
+      "fix": "Add oxlint as an exact-pinned devDependency (pnpm add -D oxlint), or change the script to a linter that is installed",
+      "leverage": {
+        "impact": "medium",
+        "effort": "low"
+      },
+      "blastRadius": [],
+      "cites": [
+        {
+          "file": "package.json",
+          "line": "11",
+          "token": "oxlint ."
+        }
+      ],
+      "path": "improve/improvements/lint-script-oxlint-missing.md"
+    },
+    {
+      "id": "next-16-1-7-critical-cves",
+      "priority": "P0",
+      "category": "security",
+      "lens": "security",
+      "status": "open",
+      "title": "next 16.1.7 carries 2 critical and 12 high advisories - bump to 16.3.3",
+      "summary": "rafa audit (osv-api + pnpm audit) flags 25 advisories on the direct dep next@16.1.7, incl. 2 critical unauthenticated RCEs; all fixed by 16.3.3",
+      "fix": "Bump next to 16.3.3 (exact pin, same major so the README badge test still holds); run pnpm install, pnpm test, pnpm build",
+      "leverage": {
+        "impact": "high",
+        "effort": "low"
+      },
+      "blastRadius": [],
+      "cites": [
+        {
+          "file": "package.json",
+          "line": "27",
+          "token": "\"next\": \"16.1.7\""
+        },
+        {
+          "file": "pnpm-lock.yaml",
+          "line": "3127",
+          "token": "next@16.1.7"
+        }
+      ],
+      "path": "improve/improvements/next-16-1-7-critical-cves.md"
+    },
+    {
+      "id": "no-ci-gate",
+      "priority": "P2",
+      "category": "ops",
+      "lens": "ops",
+      "status": "open",
+      "title": "No CI - tests, type-check and build never run on push or PR",
+      "summary": "The repo has no .github workflows or other CI config; pnpm test, check-types and build only run when someone remembers to run them locally",
+      "fix": "Add a minimal GitHub Actions workflow: pnpm install --frozen-lockfile, pnpm check-types, pnpm test, pnpm build",
+      "leverage": {
+        "impact": "high",
+        "effort": "low"
+      },
+      "blastRadius": [],
+      "cites": [
+        {
+          "file": "package.json",
+          "line": "8",
+          "token": "\"test\""
+        },
+        {
+          "file": "package.json",
+          "line": "10",
+          "token": "tsc --noEmit"
+        }
+      ],
+      "path": "improve/improvements/no-ci-gate.md"
+    },
+    {
+      "id": "postcss-sourcemap-cves",
+      "priority": "P1",
+      "category": "security",
+      "lens": "security",
+      "status": "open",
+      "title": "postcss 8.4.31 pinned by next has 2 high path-traversal advisories",
+      "summary": "next@16.1.7 pins postcss@8.4.31, flagged for arbitrary file read via sourceMappingURL (2 high, 2 moderate); fixed in 8.5.23",
+      "fix": "Add a pnpm override for next's postcss to >=8.5.23 (Tailwind already resolves postcss 8.5.28), run pnpm build, and re-audit",
+      "leverage": {
+        "impact": "low",
+        "effort": "low"
+      },
+      "blastRadius": [],
+      "cites": [
+        {
+          "file": "pnpm-lock.yaml",
+          "line": "7585",
+          "token": "postcss: 8.4.31"
+        },
+        {
+          "file": "pnpm-lock.yaml",
+          "line": "3281",
+          "token": "postcss@8.4.31"
+        }
+      ],
+      "path": "improve/improvements/postcss-sourcemap-cves.md"
+    },
+    {
+      "id": "readme-preview-lfs-pointer",
+      "priority": "P3",
+      "category": "product",
+      "lens": "product",
+      "status": "open",
+      "title": "README preview.gif is a Git LFS pointer, so the README image is broken",
+      "summary": "preview.gif is a 133-byte LFS pointer text file with no .gitattributes or LFS object in this repo - the README hero image renders broken",
+      "fix": "Re-add the real GIF (fetch the LFS object from the CopilotKit source repo) as a normal file or with LFS tracked, or point the README at a hosted image",
+      "leverage": {
+        "impact": "low",
+        "effort": "low"
+      },
+      "blastRadius": [],
+      "cites": [
+        {
+          "file": "README.md",
+          "line": "10",
+          "token": "./preview.gif"
+        },
+        {
+          "file": "preview.gif",
+          "line": "1",
+          "token": "git-lfs"
+        }
+      ],
+      "path": "improve/improvements/readme-preview-lfs-pointer.md"
+    },
+    {
+      "id": "sharp-libvips-libheif-cves",
+      "priority": "P1",
+      "category": "security",
+      "lens": "security",
+      "status": "open",
+      "title": "sharp 0.34.5 (via next) has 2 high advisories in libvips and libheif",
+      "summary": "Transitive sharp@0.34.5 under next carries GHSA-f88m-g3jw-g9cj and GHSA-rgj7-g3m4-5g8c; fixed in 0.35.4",
+      "fix": "After the next bump, re-run rafa audit; if sharp is still below 0.35.4 add a pnpm override sharp >=0.35.4 and re-run pnpm build",
+      "leverage": {
+        "impact": "medium",
+        "effort": "low"
+      },
+      "blastRadius": [],
+      "cites": [
+        {
+          "file": "pnpm-lock.yaml",
+          "line": "7599",
+          "token": "sharp: 0.34.5"
+        },
+        {
+          "file": "pnpm-lock.yaml",
+          "line": "3577",
+          "token": "sharp@0.34.5"
+        }
+      ],
+      "path": "improve/improvements/sharp-libvips-libheif-cves.md"
+    },
+    {
+      "id": "source-text-tests-brittle",
+      "priority": "P3",
+      "category": "architecture",
+      "lens": "architecture",
+      "status": "open",
+      "title": "Accessibility test regex-matches exact indentation in app/page.tsx",
+      "summary": "page-accessibility.test.mjs extracts the Suspense fallback with a regex that hard-codes six- and four-space indentation, so a formatter run breaks the test with no behaviour change",
+      "fix": "Render the fallback (react-dom/server via tsx, like SearchResults.test.tsx) and assert on the markup instead of the source text",
+      "leverage": {
+        "impact": "low",
+        "effort": "medium"
+      },
+      "blastRadius": [],
+      "cites": [
+        {
+          "file": "page-accessibility.test.mjs",
+          "line": "12",
+          "token": "fallback="
+        },
+        {
+          "file": "readme-runtime.test.mjs",
+          "line": "45",
+          "token": "useRenderTool"
+        }
+      ],
+      "path": "improve/improvements/source-text-tests-brittle.md"
+    },
+    {
+      "id": "test-script-explicit-file-list",
+      "priority": "P2",
+      "category": "ops",
+      "lens": "ops",
+      "status": "open",
+      "title": "The test script names each test file - a new test file silently never runs",
+      "summary": "pnpm test lists four files explicitly; any new *.test.* file is skipped with no error, so coverage can erode unnoticed",
+      "fix": "Switch to discovery - node --test with a glob for *.test.mjs and tsx --test for *.test.tsx - so new files are picked up automatically",
+      "leverage": {
+        "impact": "medium",
+        "effort": "low"
+      },
+      "blastRadius": [],
+      "cites": [
+        {
+          "file": "package.json",
+          "line": "8",
+          "token": "node --test current-time.test.mjs page-accessibility.test.mjs readme-runtime.test.mjs"
+        }
+      ],
+      "path": "improve/improvements/test-script-explicit-file-list.md"
+    },
+    {
+      "id": "turbopack-root-outside-repo",
+      "priority": "P2",
+      "category": "ops",
+      "lens": "ops",
+      "status": "open",
+      "title": "next.config turbopack.root resolves three levels above the standalone repo",
+      "summary": "turbopack.root is path.resolve(__dirname, ../../..) - the old monorepo root - so Turbopack roots itself outside this repo (for a checkout on Desktop that is the user's home dir)",
+      "fix": "Set turbopack.root to __dirname (or delete the turbopack block) and run pnpm dev plus pnpm build once",
+      "leverage": {
+        "impact": "medium",
+        "effort": "low"
+      },
+      "blastRadius": [],
+      "cites": [
+        {
+          "file": "next.config.ts",
+          "line": "7",
+          "token": "path.resolve(__dirname, \"../../..\")"
+        }
+      ],
+      "path": "improve/improvements/turbopack-root-outside-repo.md"
+    },
+    {
+      "id": "undici-transitive-cves",
+      "priority": "P1",
+      "category": "security",
+      "lens": "security",
+      "status": "open",
+      "title": "undici 5.29.0 under @copilotkit/runtime carries 3 high advisories",
+      "summary": "@copilotkit/runtime > @ai-sdk/google-vertex > @ai-sdk/provider-utils@3.0.40 pulls undici@5.29.0 - 13 advisories (3 high); fixes are in undici 7.24-8.10",
+      "fix": "Check whether a newer @copilotkit/runtime (bumped together with react-core) drops the provider-utils 3.x chain; otherwise add a scoped pnpm override for undici and smoke-test a chat turn",
+      "leverage": {
+        "impact": "medium",
+        "effort": "medium"
+      },
+      "blastRadius": [],
+      "cites": [
+        {
+          "file": "pnpm-lock.yaml",
+          "line": "4105",
+          "token": "undici: 5.29.0"
+        },
+        {
+          "file": "pnpm-lock.yaml",
+          "line": "3760",
+          "token": "undici@5.29.0"
+        },
+        {
+          "file": "package.json",
+          "line": "15",
+          "token": "\"@copilotkit/runtime\": \"1.75.0\""
+        }
+      ],
+      "path": "improve/improvements/undici-transitive-cves.md"
+    },
+    {
+      "id": "unused-template-dependencies",
+      "priority": "P3",
+      "category": "architecture",
+      "lens": "architecture",
+      "status": "open",
+      "title": "Seven runtime dependencies are declared but imported nowhere",
+      "summary": "@tremor/react, react-hook-form, @hookform/resolvers, four @radix-ui packages, date-fns, react-day-picker and class-variance-authority are template leftovers that no file imports",
+      "fix": "pnpm remove the unused packages, then pnpm check-types, pnpm test and pnpm build",
+      "leverage": {
+        "impact": "low",
+        "effort": "low"
+      },
+      "blastRadius": [],
+      "cites": [
+        {
+          "file": "package.json",
+          "line": "22",
+          "token": "\"@tremor/react\""
+        },
+        {
+          "file": "package.json",
+          "line": "31",
+          "token": "\"react-hook-form\""
+        },
+        {
+          "file": "package.json",
+          "line": "16",
+          "token": "\"@hookform/resolvers\""
+        },
+        {
+          "file": "package.json",
+          "line": "17",
+          "token": "\"@radix-ui/react-label\""
+        },
+        {
+          "file": "package.json",
+          "line": "25",
+          "token": "\"date-fns\""
+        },
+        {
+          "file": "package.json",
+          "line": "29",
+          "token": "\"react-day-picker\""
+        },
+        {
+          "file": "package.json",
+          "line": "23",
+          "token": "\"class-variance-authority\""
+        }
+      ],
+      "path": "improve/improvements/unused-template-dependencies.md"
+    }
+  ],
+  "drafts": [
+    {
+      "path": "improve/improvements/index.md",
+      "error": "no frontmatter block"
+    }
+  ]
+}
