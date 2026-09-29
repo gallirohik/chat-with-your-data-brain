@@ -1,0 +1,1736 @@
+{
+  "schemaVersion": 1,
+  "emitter": 2,
+  "codeSha": "31a001b8ffeeefed212be67855c60ffe88ac0d29",
+  "branch": "main",
+  "health": {
+    "verdict": "PASS"
+  },
+  "notes": [
+    {
+      "id": "add-dashboard-dataset",
+      "kind": "playbook",
+      "type": "how-to",
+      "domain": "data-ops",
+      "title": "How to add a dataset or KPI to the dashboard so both the charts and the agent see it",
+      "summary": "Export the array (or calculate* helper) from data/dashboard-data.ts, import it in Dashboard.tsx, add it to the useAgentContext value, render a Card with a chart whose index/categories match the row keys, and pick a colour palette",
+      "links": [
+        "static-dashboard-data-convention",
+        "chart-data-key-contract",
+        "agent-context-contract",
+        "chart-primitive-convention",
+        "dashboard-render-flow"
+      ],
+      "cites": [
+        {
+          "file": "data/dashboard-data.ts",
+          "line": "182",
+          "token": "export const demographicsData"
+        },
+        {
+          "file": "data/dashboard-data.ts",
+          "line": "235",
+          "token": "export const calculateProfitMargin"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "16",
+          "token": "import {"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "43",
+          "token": "value: {"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "78",
+          "token": "const colors = {"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "235",
+          "token": "<Card className=\"col-span-1 md:col-span-1 lg:col-span-2\">"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "246",
+          "token": "<BarChart"
+        }
+      ],
+      "path": "brain/playbooks/add-dashboard-dataset.md"
+    },
+    {
+      "id": "add-server-tool-with-renderer",
+      "kind": "playbook",
+      "type": "how-to",
+      "domain": "generative-ui",
+      "title": "How to add a server-side agent tool with a custom chat renderer",
+      "summary": "defineTool in the runtime route, add it to the BuiltInAgent tools array, mirror name + zod schema in a useRenderTool call under the provider, build a pure renderer in components/generative-ui, and add its test to the package.json test script",
+      "links": [
+        "search-internet-tool-contract",
+        "tool-result-rendering-convention",
+        "builtin-agent-runtime-convention",
+        "env-and-integrations",
+        "test-runner-convention",
+        "security-posture",
+        "chat-turn-flow"
+      ],
+      "cites": [
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "12",
+          "token": "defineTool"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "27",
+          "token": "tools: [searchInternet]"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "28",
+          "token": "maxSteps: 5"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "61",
+          "token": "useRenderTool({"
+        },
+        {
+          "file": "components/generative-ui/SearchResults.tsx",
+          "line": "18",
+          "token": "type SearchResultsProps"
+        },
+        {
+          "file": "components/generative-ui/SearchResults.test.tsx",
+          "line": "7",
+          "token": "renders an in-progress search state"
+        },
+        {
+          "file": "package.json",
+          "line": "8",
+          "token": "tsx --test components/generative-ui/SearchResults.test.tsx"
+        }
+      ],
+      "path": "brain/playbooks/add-server-tool-with-renderer.md",
+      "absent": "useFrontendTool"
+    },
+    {
+      "id": "change-agent-model-or-prompt",
+      "kind": "playbook",
+      "type": "how-to",
+      "domain": "agent-runtime",
+      "title": "How to change the agent's model, system prompt or step budget",
+      "summary": "Model via COPILOTKIT_MODEL env (provider/model string, default openai/gpt-5-mini) — no code change; prompt text in lib/prompt.ts; step cap maxSteps in the runtime route; a new provider prefix needs that provider's key",
+      "links": [
+        "builtin-agent-runtime-convention",
+        "env-and-integrations",
+        "chat-turn-flow"
+      ],
+      "cites": [
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "25",
+          "token": "COPILOTKIT_MODEL ?? \"openai/gpt-5-mini\""
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "28",
+          "token": "maxSteps: 5"
+        },
+        {
+          "file": "lib/prompt.ts",
+          "line": "1",
+          "token": "export const prompt"
+        }
+      ],
+      "path": "brain/playbooks/change-agent-model-or-prompt.md"
+    },
+    {
+      "id": "chat-turn-flow",
+      "kind": "playbook",
+      "type": "flow",
+      "domain": "agent-runtime",
+      "title": "One chat turn end to end — sidebar input to agent run, Tavily tool call and rendered answer",
+      "summary": "CopilotSidebar sends the message plus useAgentContext payloads to /api/copilotkit; the catch-all route hands it to the default BuiltInAgent (prompt, maxSteps 5); a searchInternet call runs Tavily server-side and streams back to the useRenderTool renderer; text renders through CustomAssistantMessage",
+      "links": [
+        "copilotkit-provider-nesting-contract",
+        "runtime-endpoint-path-contract",
+        "agent-context-contract",
+        "builtin-agent-runtime-convention",
+        "search-internet-tool-contract",
+        "tool-result-rendering-convention",
+        "env-and-integrations",
+        "security-posture"
+      ],
+      "cites": [
+        {
+          "file": "app/page.tsx",
+          "line": "41",
+          "token": "<CopilotSidebar"
+        },
+        {
+          "file": "app/page.tsx",
+          "line": "43",
+          "token": "assistantMessage: CustomAssistantMessage"
+        },
+        {
+          "file": "app/layout.tsx",
+          "line": "34",
+          "token": "runtimeUrl=\"/api/copilotkit\""
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "40",
+          "token": "useAgentContext({"
+        },
+        {
+          "file": "app/page.tsx",
+          "line": "24",
+          "token": "useAgentContext({"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "42",
+          "token": "export const POST"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "36",
+          "token": "createCopilotRuntimeHandler"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "32",
+          "token": "agents: { default: agent }"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "26",
+          "token": "prompt"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "18",
+          "token": "execute: async ({ query })"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "20",
+          "token": "client.search(query, { maxResults: 5 })"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "66",
+          "token": "render: ({ parameters, status, result })"
+        },
+        {
+          "file": "components/generative-ui/SearchResults.tsx",
+          "line": "46",
+          "token": "export function SearchResults"
+        },
+        {
+          "file": "components/AssistantMessage.tsx",
+          "line": "8",
+          "token": "<CopilotChatAssistantMessage"
+        }
+      ],
+      "path": "brain/playbooks/chat-turn-flow.md"
+    },
+    {
+      "id": "dashboard-render-flow",
+      "kind": "playbook",
+      "type": "flow",
+      "domain": "components",
+      "title": "Page render — root layout, Suspense, the 1 s current-time child isolated from the Dashboard, KPIs and five chart cards",
+      "summary": "RootLayout (fonts, CopilotKit) → Home (Suspense with accessible fallback) → HomeContent renders CurrentTimeContext (null, ticks every second), Header, Dashboard, Footer, CopilotSidebar; Dashboard computes metrics, publishes context, registers the tool renderer and lays out cards",
+      "links": [
+        "copilotkit-provider-nesting-contract",
+        "client-component-boundary-convention",
+        "agent-context-contract",
+        "static-dashboard-data-convention",
+        "chart-data-key-contract",
+        "chart-primitive-convention",
+        "source-text-tests-contract",
+        "component-organization-convention"
+      ],
+      "cites": [
+        {
+          "file": "app/layout.tsx",
+          "line": "7",
+          "token": "Geist"
+        },
+        {
+          "file": "app/layout.tsx",
+          "line": "33",
+          "token": "<CopilotKit"
+        },
+        {
+          "file": "app/page.tsx",
+          "line": "57",
+          "token": "<Suspense"
+        },
+        {
+          "file": "app/page.tsx",
+          "line": "61",
+          "token": "role=\"status\""
+        },
+        {
+          "file": "app/page.tsx",
+          "line": "11",
+          "token": "function CurrentTimeContext()"
+        },
+        {
+          "file": "lib/current-time.mjs",
+          "line": "8",
+          "token": "setInterval(onUpdate, 1_000)"
+        },
+        {
+          "file": "app/page.tsx",
+          "line": "29",
+          "token": "return null"
+        },
+        {
+          "file": "app/page.tsx",
+          "line": "35",
+          "token": "<CurrentTimeContext />"
+        },
+        {
+          "file": "app/page.tsx",
+          "line": "38",
+          "token": "<Dashboard />"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "32",
+          "token": "calculateTotalRevenue()"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "61",
+          "token": "useRenderTool({"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "87",
+          "token": "grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "131",
+          "token": "<Card"
+        }
+      ],
+      "path": "brain/playbooks/dashboard-render-flow.md"
+    },
+    {
+      "id": "security-posture",
+      "kind": "playbook",
+      "type": "flow",
+      "domain": "api",
+      "title": "Security posture — one public, unauthenticated runtime endpoint that spends LLM and Tavily credit; secrets server-only; untrusted tool output rendered defensively",
+      "summary": "Trust boundary is app/api/copilotkit/[[...slug]] (GET/POST, no auth, no rate limit, no middleware); env keys are read only server-side; client-supplied agent context and web-search results are untrusted and rendered without raw HTML, with an http/https link allow-list",
+      "links": [
+        "runtime-endpoint-path-contract",
+        "env-and-integrations",
+        "agent-context-contract",
+        "tool-result-rendering-convention",
+        "builtin-agent-runtime-convention",
+        "chat-turn-flow",
+        "repo-toolbox-inventory"
+      ],
+      "cites": [
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "41",
+          "token": "export const GET = handler"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "42",
+          "token": "export const POST = handler"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "19",
+          "token": "process.env.TAVILY_API_KEY"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "25",
+          "token": "process.env.COPILOTKIT_MODEL"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "28",
+          "token": "maxSteps: 5"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "40",
+          "token": "useAgentContext({"
+        },
+        {
+          "file": "components/generative-ui/SearchResults.tsx",
+          "line": "37",
+          "token": "isSafeSearchResultUrl"
+        },
+        {
+          "file": "components/generative-ui/SearchResults.tsx",
+          "line": "101",
+          "token": "rel=\"noreferrer\""
+        },
+        {
+          "file": "app/layout.tsx",
+          "line": "35",
+          "token": "showDevConsole={false}"
+        },
+        {
+          "file": ".gitignore",
+          "line": "34",
+          "token": ".env*"
+        },
+        {
+          "file": ".mcp.json",
+          "line": "7",
+          "token": "RAFA_MCP_KEY"
+        }
+      ],
+      "path": "brain/playbooks/security-posture.md",
+      "absent": "dangerouslySetInnerHTML"
+    },
+    {
+      "id": "agent-context-contract",
+      "kind": "rule",
+      "type": "contract",
+      "domain": "agent-runtime",
+      "title": "useAgentContext is the agent's only window onto the dashboard — two registrations, shape is the prompt",
+      "summary": "Dashboard.tsx publishes all five datasets plus computed metrics and page.tsx publishes the current time; anything not passed here is invisible to the agent, and the tests pin where the time context lives",
+      "links": [
+        "chat-turn-flow",
+        "dashboard-render-flow",
+        "static-dashboard-data-convention",
+        "add-dashboard-dataset",
+        "source-text-tests-contract",
+        "security-posture"
+      ],
+      "cites": [
+        {
+          "file": "app/page.tsx",
+          "line": "3",
+          "token": "useAgentContext"
+        },
+        {
+          "file": "app/page.tsx",
+          "line": "24",
+          "token": "useAgentContext({"
+        },
+        {
+          "file": "app/page.tsx",
+          "line": "25",
+          "token": "description: \"Current time\""
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "10",
+          "token": "useAgentContext"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "40",
+          "token": "useAgentContext({"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "43",
+          "token": "value: {"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "49",
+          "token": "metrics: {"
+        },
+        {
+          "file": "current-time.test.mjs",
+          "line": "47",
+          "token": "useAgentContext"
+        },
+        {
+          "file": "current-time.test.mjs",
+          "line": "56",
+          "token": "useAgentContext"
+        }
+      ],
+      "path": "brain/rules/agent-context-contract.md",
+      "anchor": "useAgentContext"
+    },
+    {
+      "id": "build-and-deps-convention",
+      "kind": "rule",
+      "type": "convention",
+      "domain": "build-tooling",
+      "title": "pnpm + Next 16.1.7 standalone app — exact pins that move together, a monorepo-leftover turbopack root, and a lint script whose binary is not installed",
+      "summary": "pnpm is the only package manager (lockfile committed, README-test enforced); next and both @copilotkit packages are exact pins; next.config turbopack.root points three levels up; oxlint is invoked but not a dependency",
+      "links": [
+        "copilotkit-v2-api-convention",
+        "source-text-tests-contract",
+        "test-runner-convention",
+        "repo-toolbox-inventory"
+      ],
+      "cites": [
+        {
+          "file": "package.json",
+          "line": "6",
+          "token": "next dev --turbopack"
+        },
+        {
+          "file": "package.json",
+          "line": "7",
+          "token": "next build"
+        },
+        {
+          "file": "package.json",
+          "line": "10",
+          "token": "tsc --noEmit"
+        },
+        {
+          "file": "package.json",
+          "line": "11",
+          "token": "oxlint ."
+        },
+        {
+          "file": "package.json",
+          "line": "14",
+          "token": "\"@copilotkit/react-core\": \"1.75.0\""
+        },
+        {
+          "file": "package.json",
+          "line": "15",
+          "token": "\"@copilotkit/runtime\": \"1.75.0\""
+        },
+        {
+          "file": "package.json",
+          "line": "27",
+          "token": "\"next\": \"16.1.7\""
+        },
+        {
+          "file": "package.json",
+          "line": "38",
+          "token": "\"@rafinery/cli\": \"0.20.0\""
+        },
+        {
+          "file": "next.config.ts",
+          "line": "5",
+          "token": "allowedDevOrigins"
+        },
+        {
+          "file": "next.config.ts",
+          "line": "7",
+          "token": "path.resolve(__dirname, \"../../..\")"
+        },
+        {
+          "file": "tsconfig.json",
+          "line": "7",
+          "token": "\"strict\": true"
+        },
+        {
+          "file": "rafa.json",
+          "line": "15",
+          "token": "\"cli\": \"0.21.0\""
+        },
+        {
+          "file": "readme-runtime.test.mjs",
+          "line": "34",
+          "token": "- pnpm$"
+        }
+      ],
+      "path": "brain/rules/build-and-deps-convention.md",
+      "absent": "from \"@hookform/resolvers"
+    },
+    {
+      "id": "builtin-agent-runtime-convention",
+      "kind": "rule",
+      "type": "convention",
+      "domain": "agent-runtime",
+      "title": "One BuiltInAgent registered as \"default\", in-memory runner, prompt from lib/prompt.ts",
+      "summary": "The runtime route builds a single v2 BuiltInAgent (model from COPILOTKIT_MODEL, fallback openai/gpt-5-mini, maxSteps 5) keyed \"default\" on a CopilotRuntime with InMemoryAgentRunner — no service adapters, no external agent graph",
+      "links": [
+        "chat-turn-flow",
+        "change-agent-model-or-prompt",
+        "env-and-integrations",
+        "runtime-endpoint-path-contract",
+        "search-internet-tool-contract",
+        "copilotkit-v2-api-convention"
+      ],
+      "cites": [
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "24",
+          "token": "new BuiltInAgent"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "25",
+          "token": "COPILOTKIT_MODEL ?? \"openai/gpt-5-mini\""
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "26",
+          "token": "prompt"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "28",
+          "token": "maxSteps: 5"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "32",
+          "token": "agents: { default: agent }"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "33",
+          "token": "new InMemoryAgentRunner()"
+        },
+        {
+          "file": "lib/prompt.ts",
+          "line": "1",
+          "token": "export const prompt"
+        }
+      ],
+      "path": "brain/rules/builtin-agent-runtime-convention.md",
+      "absent": "useCoAgent"
+    },
+    {
+      "id": "chart-data-key-contract",
+      "kind": "rule",
+      "type": "contract",
+      "domain": "data-ops",
+      "title": "Chart index/categories props are string keys into the data rows — a mismatch renders an empty chart",
+      "summary": "Dashboard.tsx passes index=\"date\"|\"name\"|\"region\"|\"ageGroup\" and categories like [\"Sales\",\"Profit\",\"Expenses\"] that must exactly match row keys in data/dashboard-data.ts; ChartDataItem is an index signature so TypeScript cannot catch drift",
+      "links": [
+        "static-dashboard-data-convention",
+        "chart-primitive-convention",
+        "add-dashboard-dataset"
+      ],
+      "cites": [
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "143",
+          "token": "data={salesData}"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "144",
+          "token": "index=\"date\""
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "145",
+          "token": "categories={[\"Sales\", \"Profit\", \"Expenses\"]}"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "170",
+          "token": "index=\"name\""
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "171",
+          "token": "categories={[\"sales\"]}"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "195",
+          "token": "category=\"value\""
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "223",
+          "token": "index=\"region\""
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "248",
+          "token": "index=\"ageGroup\""
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "249",
+          "token": "categories={[\"spending\"]}"
+        },
+        {
+          "file": "data/dashboard-data.ts",
+          "line": "5",
+          "token": "Sales:"
+        },
+        {
+          "file": "components/ui/area-chart.tsx",
+          "line": "15",
+          "token": "interface ChartDataItem"
+        }
+      ],
+      "path": "brain/rules/chart-data-key-contract.md",
+      "anchor": "none"
+    },
+    {
+      "id": "chart-primitive-convention",
+      "kind": "rule",
+      "type": "convention",
+      "domain": "design-system",
+      "title": "Charts are hand-rolled Recharts wrappers with a Tremor-style API in components/ui — @tremor/react is declared but never imported",
+      "summary": "AreaChart, BarChart, PieChart/DonutChart share props (data, index, categories, colors, valueFormatter, show*), each redeclares ChartDataItem, uses hex palettes with fillOpacity 0.1 outlines, and must render inside a sized parent",
+      "links": [
+        "chart-data-key-contract",
+        "design-tokens-convention",
+        "add-dashboard-dataset",
+        "component-organization-convention"
+      ],
+      "cites": [
+        {
+          "file": "components/ui/area-chart.tsx",
+          "line": "15",
+          "token": "interface ChartDataItem"
+        },
+        {
+          "file": "components/ui/area-chart.tsx",
+          "line": "20",
+          "token": "ChartDataItem[]"
+        },
+        {
+          "file": "components/ui/bar-chart.tsx",
+          "line": "15",
+          "token": "interface ChartDataItem"
+        },
+        {
+          "file": "components/ui/bar-chart.tsx",
+          "line": "20",
+          "token": "ChartDataItem[]"
+        },
+        {
+          "file": "components/ui/pie-chart.tsx",
+          "line": "14",
+          "token": "interface ChartDataItem"
+        },
+        {
+          "file": "components/ui/pie-chart.tsx",
+          "line": "51",
+          "token": "ChartDataItem[]"
+        },
+        {
+          "file": "components/ui/area-chart.tsx",
+          "line": "33",
+          "token": "export function AreaChart"
+        },
+        {
+          "file": "components/ui/area-chart.tsx",
+          "line": "115",
+          "token": "fillOpacity={0.1}"
+        },
+        {
+          "file": "components/ui/bar-chart.tsx",
+          "line": "70",
+          "token": "layout === \"horizontal\" ? \"category\" : \"number\""
+        },
+        {
+          "file": "components/ui/pie-chart.tsx",
+          "line": "176",
+          "token": "export function DonutChart"
+        },
+        {
+          "file": "components/ui/pie-chart.tsx",
+          "line": "180",
+          "token": "props.innerRadius || 40"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "78",
+          "token": "const colors = {"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "141",
+          "token": "h-60"
+        },
+        {
+          "file": "package.json",
+          "line": "22",
+          "token": "\"@tremor/react\""
+        }
+      ],
+      "path": "brain/rules/chart-primitive-convention.md",
+      "anchor": "ChartDataItem",
+      "absent": "from \"@tremor/react"
+    },
+    {
+      "id": "client-component-boundary-convention",
+      "kind": "rule",
+      "type": "convention",
+      "domain": "routing-app-shell",
+      "title": "\"use client\" boundary — the only page is a client page; charts and CopilotKit consumers are client components",
+      "summary": "app/page.tsx is a page-level client component; every file with hooks or Recharts carries \"use client\"; card.tsx stays directive-free; Header/Footer carry it without needing it",
+      "links": [
+        "copilotkit-provider-nesting-contract",
+        "dashboard-render-flow",
+        "component-organization-convention"
+      ],
+      "cites": [
+        {
+          "file": "app/page.tsx",
+          "line": "1",
+          "token": "\"use client\""
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "1",
+          "token": "\"use client\""
+        },
+        {
+          "file": "components/Footer.tsx",
+          "line": "1",
+          "token": "\"use client\""
+        },
+        {
+          "file": "components/Header.tsx",
+          "line": "1",
+          "token": "\"use client\""
+        },
+        {
+          "file": "components/ui/area-chart.tsx",
+          "line": "1",
+          "token": "\"use client\""
+        },
+        {
+          "file": "components/ui/bar-chart.tsx",
+          "line": "1",
+          "token": "\"use client\""
+        },
+        {
+          "file": "components/ui/pie-chart.tsx",
+          "line": "1",
+          "token": "\"use client\""
+        },
+        {
+          "file": "components.json",
+          "line": "4",
+          "token": "\"rsc\": true"
+        },
+        {
+          "file": "app/layout.tsx",
+          "line": "23",
+          "token": "RootLayout"
+        }
+      ],
+      "path": "brain/rules/client-component-boundary-convention.md",
+      "anchor": "use client",
+      "absent": "use server"
+    },
+    {
+      "id": "component-organization-convention",
+      "kind": "rule",
+      "type": "convention",
+      "domain": "components",
+      "title": "components/ layout — PascalCase app components, kebab-case ui primitives, generative-ui renderers; named exports; relative imports",
+      "summary": "App-level pieces (Dashboard, Header, Footer, AssistantMessage) are PascalCase files with named exports at components/; shadcn-style primitives live in components/ui (kebab-case); chat tool renderers in components/generative-ui",
+      "links": [
+        "client-component-boundary-convention",
+        "chart-primitive-convention",
+        "design-tokens-convention",
+        "tool-result-rendering-convention",
+        "dashboard-render-flow"
+      ],
+      "cites": [
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "30",
+          "token": "export function Dashboard"
+        },
+        {
+          "file": "components/Header.tsx",
+          "line": "3",
+          "token": "export function Header"
+        },
+        {
+          "file": "components/Footer.tsx",
+          "line": "3",
+          "token": "export function Footer"
+        },
+        {
+          "file": "components/AssistantMessage.tsx",
+          "line": "16",
+          "token": "CustomAssistantMessageComponent as typeof CopilotChatAssistantMessage"
+        },
+        {
+          "file": "components/generative-ui/SearchResults.tsx",
+          "line": "46",
+          "token": "export function SearchResults"
+        },
+        {
+          "file": "components/ui/card.tsx",
+          "line": "8",
+          "token": "data-slot=\"card\""
+        },
+        {
+          "file": "components/ui/card.tsx",
+          "line": "3",
+          "token": "import { cn } from \"@/lib/utils\""
+        },
+        {
+          "file": "components.json",
+          "line": "16",
+          "token": "\"ui\": \"@/components/ui\""
+        },
+        {
+          "file": "tsconfig.json",
+          "line": "22",
+          "token": "\"@/*\": [\"./*\"]"
+        },
+        {
+          "file": "app/page.tsx",
+          "line": "4",
+          "token": "import { Dashboard } from \"../components/Dashboard\""
+        }
+      ],
+      "path": "brain/rules/component-organization-convention.md"
+    },
+    {
+      "id": "copilotkit-css-override-contract",
+      "kind": "rule",
+      "type": "contract",
+      "domain": "design-system",
+      "title": "CopilotKit theming works only because globals.css is imported after the v2 stylesheet and scopes vars to [data-copilotkit]",
+      "summary": "layout.tsx imports @copilotkit/react-core/v2/styles.css before ./globals.css; globals.css redefines --background/--primary/... under [data-copilotkit] (and its .dark forms) — reorder the imports and the overrides lose the cascade",
+      "links": [
+        "copilotkit-provider-nesting-contract",
+        "design-tokens-convention",
+        "copilotkit-v2-api-convention"
+      ],
+      "cites": [
+        {
+          "file": "app/layout.tsx",
+          "line": "4",
+          "token": "@copilotkit/react-core/v2/styles.css"
+        },
+        {
+          "file": "app/layout.tsx",
+          "line": "5",
+          "token": "import \"./globals.css\""
+        },
+        {
+          "file": "app/globals.css",
+          "line": "83",
+          "token": "[data-copilotkit] {"
+        },
+        {
+          "file": "app/globals.css",
+          "line": "96",
+          "token": ".dark [data-copilotkit]"
+        },
+        {
+          "file": "app/globals.css",
+          "line": "97",
+          "token": "[data-copilotkit].dark"
+        },
+        {
+          "file": "app/globals.css",
+          "line": "158",
+          "token": ".copilotKitSidebar .copilotKitWindow"
+        },
+        {
+          "file": "app/globals.css",
+          "line": "162",
+          "token": ".copilotKitButton"
+        },
+        {
+          "file": "app/globals.css",
+          "line": "168",
+          "token": ".copilotKitMessage.copilotKitUserMessage"
+        },
+        {
+          "file": "components/AssistantMessage.tsx",
+          "line": "10",
+          "token": "className=\"rounded-lg border border-gray-200 bg-white"
+        }
+      ],
+      "path": "brain/rules/copilotkit-css-override-contract.md",
+      "anchor": "data-copilotkit"
+    },
+    {
+      "id": "copilotkit-provider-nesting-contract",
+      "kind": "rule",
+      "type": "contract",
+      "domain": "routing-app-shell",
+      "title": "Every CopilotKit hook and component must render beneath the root CopilotKit provider",
+      "summary": "app/layout.tsx wraps all children in <CopilotKit runtimeUrl=...>; useAgentContext, useRenderTool and CopilotSidebar only work inside that subtree",
+      "links": [
+        "runtime-endpoint-path-contract",
+        "agent-context-contract",
+        "search-internet-tool-contract",
+        "dashboard-render-flow",
+        "client-component-boundary-convention"
+      ],
+      "cites": [
+        {
+          "file": "app/layout.tsx",
+          "line": "3",
+          "token": "CopilotKit"
+        },
+        {
+          "file": "app/layout.tsx",
+          "line": "33",
+          "token": "<CopilotKit"
+        },
+        {
+          "file": "app/layout.tsx",
+          "line": "34",
+          "token": "runtimeUrl"
+        },
+        {
+          "file": "app/layout.tsx",
+          "line": "36",
+          "token": "useSingleEndpoint={false}"
+        },
+        {
+          "file": "app/layout.tsx",
+          "line": "38",
+          "token": "{children}"
+        },
+        {
+          "file": "app/page.tsx",
+          "line": "41",
+          "token": "<CopilotSidebar"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "40",
+          "token": "useAgentContext({"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "61",
+          "token": "useRenderTool({"
+        }
+      ],
+      "path": "brain/rules/copilotkit-provider-nesting-contract.md",
+      "anchor": "none"
+    },
+    {
+      "id": "copilotkit-v2-api-convention",
+      "kind": "rule",
+      "type": "convention",
+      "domain": "agent-runtime",
+      "title": "All CopilotKit imports use the /v2 subpaths at pinned 1.75.0 — never the v1 hooks or react-ui package",
+      "summary": "react-core/v2 (CopilotKit, CopilotSidebar, useAgentContext, useRenderTool, CopilotChatAssistantMessage, styles.css) and runtime/v2 are the only CopilotKit entry points; v1 APIs are absent and must not be reintroduced",
+      "links": [
+        "builtin-agent-runtime-convention",
+        "copilotkit-provider-nesting-contract",
+        "search-internet-tool-contract",
+        "build-and-deps-convention"
+      ],
+      "cites": [
+        {
+          "file": "app/layout.tsx",
+          "line": "3",
+          "token": "@copilotkit/react-core/v2"
+        },
+        {
+          "file": "app/layout.tsx",
+          "line": "4",
+          "token": "@copilotkit/react-core/v2/styles.css"
+        },
+        {
+          "file": "app/page.tsx",
+          "line": "3",
+          "token": "@copilotkit/react-core/v2"
+        },
+        {
+          "file": "components/AssistantMessage.tsx",
+          "line": "1",
+          "token": "@copilotkit/react-core/v2"
+        },
+        {
+          "file": "components/AssistantMessage.tsx",
+          "line": "2",
+          "token": "@copilotkit/react-core/v2"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "10",
+          "token": "@copilotkit/react-core/v2"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "8",
+          "token": "@copilotkit/runtime/v2"
+        },
+        {
+          "file": "package.json",
+          "line": "14",
+          "token": "\"@copilotkit/react-core\": \"1.75.0\""
+        },
+        {
+          "file": "package.json",
+          "line": "15",
+          "token": "\"@copilotkit/runtime\": \"1.75.0\""
+        }
+      ],
+      "path": "brain/rules/copilotkit-v2-api-convention.md",
+      "anchor": "@copilotkit/react-core/v2",
+      "absent": "@copilotkit/react-ui"
+    },
+    {
+      "id": "design-tokens-convention",
+      "kind": "rule",
+      "type": "convention",
+      "domain": "design-system",
+      "title": "Tailwind v4 CSS-first theme with shadcn new-york/stone tokens in globals.css — app chrome still uses raw gray utilities",
+      "summary": "No tailwind.config; @import tailwindcss + @theme inline maps oklch CSS vars to utilities; cn() merges classes; card.tsx is token-based while Dashboard/Header/Footer hard-code gray-*; the .dark variant exists but nothing toggles it",
+      "links": [
+        "chart-primitive-convention",
+        "copilotkit-css-override-contract",
+        "component-organization-convention"
+      ],
+      "cites": [
+        {
+          "file": "app/globals.css",
+          "line": "1",
+          "token": "@import \"tailwindcss\""
+        },
+        {
+          "file": "app/globals.css",
+          "line": "3",
+          "token": "@plugin \"tailwindcss-animate\""
+        },
+        {
+          "file": "app/globals.css",
+          "line": "5",
+          "token": "@custom-variant dark"
+        },
+        {
+          "file": "app/globals.css",
+          "line": "12",
+          "token": ":root {"
+        },
+        {
+          "file": "app/globals.css",
+          "line": "32",
+          "token": "--chart-1"
+        },
+        {
+          "file": "app/globals.css",
+          "line": "48",
+          "token": ".dark {"
+        },
+        {
+          "file": "app/globals.css",
+          "line": "109",
+          "token": "@theme inline {"
+        },
+        {
+          "file": "app/globals.css",
+          "line": "148",
+          "token": "@layer base {"
+        },
+        {
+          "file": "components.json",
+          "line": "3",
+          "token": "\"style\": \"new-york\""
+        },
+        {
+          "file": "components.json",
+          "line": "7",
+          "token": "\"config\": \"\""
+        },
+        {
+          "file": "components.json",
+          "line": "9",
+          "token": "\"baseColor\": \"stone\""
+        },
+        {
+          "file": "lib/utils.ts",
+          "line": "5",
+          "token": "export function cn"
+        },
+        {
+          "file": "components/ui/card.tsx",
+          "line": "10",
+          "token": "bg-card text-card-foreground"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "91",
+          "token": "bg-white p-3 rounded-lg border border-gray-100"
+        },
+        {
+          "file": "postcss.config.mjs",
+          "line": "2",
+          "token": "@tailwindcss/postcss"
+        }
+      ],
+      "path": "brain/rules/design-tokens-convention.md",
+      "absent": "next-themes"
+    },
+    {
+      "id": "env-and-integrations",
+      "kind": "rule",
+      "type": "convention",
+      "domain": "external-integrations",
+      "title": "Env vars and external services — TAVILY_API_KEY and COPILOTKIT_MODEL are read in the runtime route; the LLM key is consumed inside the runtime library",
+      "summary": "Repo code reads exactly two env names, both server-side in the runtime route; OPENAI_API_KEY (README) is never read by repo code — the provider in @copilotkit/runtime picks it up; no NEXT_PUBLIC_ vars",
+      "links": [
+        "builtin-agent-runtime-convention",
+        "search-internet-tool-contract",
+        "security-posture",
+        "change-agent-model-or-prompt"
+      ],
+      "cites": [
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "1",
+          "token": "import { tavily } from \"@tavily/core\""
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "19",
+          "token": "process.env.TAVILY_API_KEY"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "25",
+          "token": "process.env.COPILOTKIT_MODEL"
+        },
+        {
+          "file": "package.json",
+          "line": "21",
+          "token": "\"@tavily/core\""
+        },
+        {
+          "file": "README.md",
+          "line": "48",
+          "token": "OPENAI_API_KEY"
+        },
+        {
+          "file": "README.md",
+          "line": "49",
+          "token": "TAVILY_API_KEY"
+        }
+      ],
+      "path": "brain/rules/env-and-integrations.md",
+      "anchor": "process.env",
+      "absent": "NEXT_PUBLIC_"
+    },
+    {
+      "id": "repo-toolbox-inventory",
+      "kind": "rule",
+      "type": "convention",
+      "domain": "toolbox",
+      "title": "Repo agent toolbox — rafa SOP skills, harness-neutral .agents skills, the rafinery MCP server, hooks and granted permissions",
+      "summary": ".claude/ carries 13 rafa-* skills, 5 agent cards, the /rafa command, lifecycle hooks and three allow permissions; .agents/skills carries 7 consent-installed skills (tdd, frontend-design, vercel-composition-patterns, ...); .mcp.json registers the rafinery HTTP MCP server keyed by RAFA_MCP_KEY",
+      "links": [
+        "build-and-deps-convention",
+        "test-runner-convention",
+        "security-posture"
+      ],
+      "cites": [
+        {
+          "file": ".claude/settings.json",
+          "line": "4",
+          "token": "Read(.rafa/**)"
+        },
+        {
+          "file": ".claude/settings.json",
+          "line": "5",
+          "token": "Bash(npx @rafinery/cli:*)"
+        },
+        {
+          "file": ".claude/settings.json",
+          "line": "6",
+          "token": "Bash(rafa:*)"
+        },
+        {
+          "file": ".claude/settings.json",
+          "line": "10",
+          "token": "SessionStart"
+        },
+        {
+          "file": ".claude/settings.json",
+          "line": "16",
+          "token": "session-start.mjs"
+        },
+        {
+          "file": ".claude/settings.json",
+          "line": "23",
+          "token": "Edit|Write|MultiEdit|NotebookEdit"
+        },
+        {
+          "file": ".claude/settings.json",
+          "line": "41",
+          "token": "UserPromptSubmit"
+        },
+        {
+          "file": ".claude/commands/rafa.md",
+          "line": "3",
+          "token": "description: rafa"
+        },
+        {
+          "file": ".mcp.json",
+          "line": "3",
+          "token": "\"rafinery\""
+        },
+        {
+          "file": ".mcp.json",
+          "line": "5",
+          "token": "https://dev.rafinery.ai/api/mcp"
+        },
+        {
+          "file": ".mcp.json",
+          "line": "7",
+          "token": "RAFA_MCP_KEY"
+        },
+        {
+          "file": ".agents/skills/tdd/SKILL.md",
+          "line": "2",
+          "token": "name: tdd"
+        },
+        {
+          "file": ".agents/skills/frontend-design/SKILL.md",
+          "line": "2",
+          "token": "name: frontend-design"
+        },
+        {
+          "file": ".agents/skills/vercel-composition-patterns/SKILL.md",
+          "line": "2",
+          "token": "name: vercel-composition-patterns"
+        },
+        {
+          "file": ".agents/skills/requesting-code-review/SKILL.md",
+          "line": "2",
+          "token": "name: requesting-code-review"
+        },
+        {
+          "file": ".agents/skills/improve-codebase-architecture/SKILL.md",
+          "line": "2",
+          "token": "name: improve-codebase-architecture"
+        },
+        {
+          "file": ".agents/skills/grill-me/SKILL.md",
+          "line": "2",
+          "token": "name: grill-me"
+        },
+        {
+          "file": ".agents/skills/grilling/SKILL.md",
+          "line": "2",
+          "token": "name: grilling"
+        },
+        {
+          "file": ".claude/skills/rafa-scan/SKILL.md",
+          "line": "2",
+          "token": "name: rafa-scan"
+        },
+        {
+          "file": "rafa.json",
+          "line": "5",
+          "token": "\"tdd\": \"1.0.0\""
+        }
+      ],
+      "path": "brain/rules/repo-toolbox-inventory.md"
+    },
+    {
+      "id": "runtime-endpoint-path-contract",
+      "kind": "rule",
+      "type": "contract",
+      "domain": "api",
+      "title": "The CopilotKit runtime path is declared in three places that must agree",
+      "summary": "layout runtimeUrl, the handler basePath and the app/api/copilotkit/[[...slug]] folder all encode /api/copilotkit; useSingleEndpoint={false} needs the optional catch-all",
+      "links": [
+        "copilotkit-provider-nesting-contract",
+        "chat-turn-flow",
+        "builtin-agent-runtime-convention",
+        "security-posture"
+      ],
+      "cites": [
+        {
+          "file": "app/layout.tsx",
+          "line": "34",
+          "token": "runtimeUrl=\"/api/copilotkit\""
+        },
+        {
+          "file": "app/layout.tsx",
+          "line": "36",
+          "token": "useSingleEndpoint={false}"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "36",
+          "token": "createCopilotRuntimeHandler"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "38",
+          "token": "basePath: \"/api/copilotkit\""
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "41",
+          "token": "export const GET"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "42",
+          "token": "export const POST"
+        }
+      ],
+      "path": "brain/rules/runtime-endpoint-path-contract.md",
+      "anchor": "/api/copilotkit"
+    },
+    {
+      "id": "search-internet-tool-contract",
+      "kind": "rule",
+      "type": "contract",
+      "domain": "generative-ui",
+      "title": "searchInternet — server tool name and parameter schema are mirrored in the client renderer",
+      "summary": "defineTool in the runtime route and useRenderTool in Dashboard.tsx must share the name \"searchInternet\" and the { query: string } schema; a mismatch silently drops the custom UI",
+      "links": [
+        "tool-result-rendering-convention",
+        "add-server-tool-with-renderer",
+        "chat-turn-flow",
+        "env-and-integrations",
+        "agent-context-contract"
+      ],
+      "cites": [
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "12",
+          "token": "const searchInternet = defineTool"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "13",
+          "token": "name: \"searchInternet\""
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "16",
+          "token": "query: z.string()"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "20",
+          "token": "maxResults: 5"
+        },
+        {
+          "file": "app/api/copilotkit/[[...slug]]/route.ts",
+          "line": "27",
+          "token": "tools: [searchInternet]"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "62",
+          "token": "name: \"searchInternet\""
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "64",
+          "token": "query: z.string()"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "66",
+          "token": "render: ({ parameters, status, result })"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "68",
+          "token": "<SearchResults"
+        }
+      ],
+      "path": "brain/rules/search-internet-tool-contract.md",
+      "anchor": "searchInternet"
+    },
+    {
+      "id": "source-text-tests-contract",
+      "kind": "rule",
+      "type": "contract",
+      "domain": "testing",
+      "title": "Three tests regex-read app/page.tsx, README.md and package.json as text — formatting and structure are asserted",
+      "summary": "current-time, page-accessibility and readme-runtime tests readFileSync source/docs and match regexes on function bodies, indentation, badges and code snippets; refactoring page.tsx or editing README prose can fail pnpm test",
+      "links": [
+        "test-runner-convention",
+        "agent-context-contract",
+        "dashboard-render-flow",
+        "build-and-deps-convention",
+        "search-internet-tool-contract"
+      ],
+      "cites": [
+        {
+          "file": "current-time.test.mjs",
+          "line": "2",
+          "token": "readFileSync"
+        },
+        {
+          "file": "current-time.test.mjs",
+          "line": "6",
+          "token": "readFileSync"
+        },
+        {
+          "file": "current-time.test.mjs",
+          "line": "36",
+          "token": "function CurrentTimeContext"
+        },
+        {
+          "file": "current-time.test.mjs",
+          "line": "55",
+          "token": "homeContentSource"
+        },
+        {
+          "file": "page-accessibility.test.mjs",
+          "line": "2",
+          "token": "readFileSync"
+        },
+        {
+          "file": "page-accessibility.test.mjs",
+          "line": "5",
+          "token": "readFileSync"
+        },
+        {
+          "file": "page-accessibility.test.mjs",
+          "line": "12",
+          "token": "fallback="
+        },
+        {
+          "file": "readme-runtime.test.mjs",
+          "line": "2",
+          "token": "readFileSync"
+        },
+        {
+          "file": "readme-runtime.test.mjs",
+          "line": "8",
+          "token": "readFileSync"
+        },
+        {
+          "file": "readme-runtime.test.mjs",
+          "line": "11",
+          "token": "readFileSync"
+        },
+        {
+          "file": "readme-runtime.test.mjs",
+          "line": "26",
+          "token": "Built%20with-Next"
+        },
+        {
+          "file": "readme-runtime.test.mjs",
+          "line": "34",
+          "token": "- pnpm$"
+        },
+        {
+          "file": "readme-runtime.test.mjs",
+          "line": "45",
+          "token": "useRenderTool"
+        },
+        {
+          "file": "app/page.tsx",
+          "line": "11",
+          "token": "function CurrentTimeContext()"
+        },
+        {
+          "file": "app/page.tsx",
+          "line": "32",
+          "token": "function HomeContent()"
+        }
+      ],
+      "path": "brain/rules/source-text-tests-contract.md",
+      "anchor": "readFileSync"
+    },
+    {
+      "id": "static-dashboard-data-convention",
+      "kind": "rule",
+      "type": "convention",
+      "domain": "data-ops",
+      "title": "All dashboard data is static in data/dashboard-data.ts; KPIs come from calculate* helpers with mixed return types",
+      "summary": "Five exported arrays plus six calculate* helpers are the entire data layer — no fetching, no DB, no API; conversion rate is a hard-coded ratio; lib/user-info.ts is dead mock code",
+      "links": [
+        "chart-data-key-contract",
+        "agent-context-contract",
+        "add-dashboard-dataset",
+        "dashboard-render-flow"
+      ],
+      "cites": [
+        {
+          "file": "data/dashboard-data.ts",
+          "line": "2",
+          "token": "export const salesData"
+        },
+        {
+          "file": "data/dashboard-data.ts",
+          "line": "90",
+          "token": "export const productData"
+        },
+        {
+          "file": "data/dashboard-data.ts",
+          "line": "124",
+          "token": "export const categoryData"
+        },
+        {
+          "file": "data/dashboard-data.ts",
+          "line": "153",
+          "token": "export const regionalData"
+        },
+        {
+          "file": "data/dashboard-data.ts",
+          "line": "182",
+          "token": "export const demographicsData"
+        },
+        {
+          "file": "data/dashboard-data.ts",
+          "line": "211",
+          "token": "calculateTotalRevenue"
+        },
+        {
+          "file": "data/dashboard-data.ts",
+          "line": "225",
+          "token": "8.13"
+        },
+        {
+          "file": "data/dashboard-data.ts",
+          "line": "226",
+          "token": "toFixed(1) + \"%\""
+        },
+        {
+          "file": "data/dashboard-data.ts",
+          "line": "232",
+          "token": "toFixed(2)"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "32",
+          "token": "calculateTotalRevenue()"
+        },
+        {
+          "file": "lib/user-info.ts",
+          "line": "1",
+          "token": "export const getUser"
+        }
+      ],
+      "path": "brain/rules/static-dashboard-data-convention.md",
+      "absent": "prisma"
+    },
+    {
+      "id": "test-runner-convention",
+      "kind": "rule",
+      "type": "convention",
+      "domain": "testing",
+      "title": "Tests run on node:test (+ tsx for TSX) from an explicit file list in package.json — new test files must be added to the script",
+      "summary": "pnpm test = node --test on three root .mjs files then tsx --test on SearchResults.test.tsx; no jest/vitest/e2e; components are tested with react-dom/server renderToStaticMarkup",
+      "links": [
+        "source-text-tests-contract",
+        "tool-result-rendering-convention",
+        "build-and-deps-convention"
+      ],
+      "cites": [
+        {
+          "file": "package.json",
+          "line": "8",
+          "token": "node --test current-time.test.mjs page-accessibility.test.mjs readme-runtime.test.mjs && tsx --test components/generative-ui/SearchResults.test.tsx"
+        },
+        {
+          "file": "package.json",
+          "line": "44",
+          "token": "\"tsx\""
+        },
+        {
+          "file": "components/generative-ui/SearchResults.test.tsx",
+          "line": "1",
+          "token": "node:assert/strict"
+        },
+        {
+          "file": "components/generative-ui/SearchResults.test.tsx",
+          "line": "3",
+          "token": "renderToStaticMarkup"
+        },
+        {
+          "file": "current-time.test.mjs",
+          "line": "12",
+          "token": "mock.timers.enable"
+        },
+        {
+          "file": "lib/current-time.mjs",
+          "line": "7",
+          "token": "export function startCurrentTimeUpdates"
+        }
+      ],
+      "path": "brain/rules/test-runner-convention.md",
+      "absent": "jest"
+    },
+    {
+      "id": "tool-result-rendering-convention",
+      "kind": "rule",
+      "type": "convention",
+      "domain": "generative-ui",
+      "title": "Tool renderers receive a status union and a string result — parse defensively, honour the \"Error:\" prefix, allow-list link schemes",
+      "summary": "SearchResults is the model renderer — status executing|inProgress|complete, result string|undefined parsed via zod safeParse with plain-text fallback, \"Error:\"-prefixed results render as errors, only http/https URLs become links",
+      "links": [
+        "search-internet-tool-contract",
+        "add-server-tool-with-renderer",
+        "security-posture",
+        "test-runner-convention"
+      ],
+      "cites": [
+        {
+          "file": "components/generative-ui/SearchResults.tsx",
+          "line": "5",
+          "token": "searchResponseSchema"
+        },
+        {
+          "file": "components/generative-ui/SearchResults.tsx",
+          "line": "20",
+          "token": "\"executing\" | \"inProgress\" | \"complete\""
+        },
+        {
+          "file": "components/generative-ui/SearchResults.tsx",
+          "line": "21",
+          "token": "result: string | undefined"
+        },
+        {
+          "file": "components/generative-ui/SearchResults.tsx",
+          "line": "30",
+          "token": "safeParse(JSON.parse(result))"
+        },
+        {
+          "file": "components/generative-ui/SearchResults.tsx",
+          "line": "37",
+          "token": "isSafeSearchResultUrl"
+        },
+        {
+          "file": "components/generative-ui/SearchResults.tsx",
+          "line": "49",
+          "token": "startsWith(\"Error:\")"
+        },
+        {
+          "file": "components/generative-ui/SearchResults.tsx",
+          "line": "97",
+          "token": "isSafeSearchResultUrl"
+        },
+        {
+          "file": "components/generative-ui/SearchResults.tsx",
+          "line": "101",
+          "token": "rel=\"noreferrer\""
+        },
+        {
+          "file": "components/generative-ui/SearchResults.tsx",
+          "line": "115",
+          "token": "!searchResponse && result"
+        },
+        {
+          "file": "components/generative-ui/SearchResults.test.tsx",
+          "line": "99",
+          "token": "renders a failed v2 tool result as an error"
+        }
+      ],
+      "path": "brain/rules/tool-result-rendering-convention.md",
+      "anchor": "isSafeSearchResultUrl"
+    }
+  ],
+  "improvements": []
+}
