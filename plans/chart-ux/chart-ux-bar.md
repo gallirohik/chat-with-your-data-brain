@@ -11,7 +11,7 @@ description: >-
   Three of five dashboard charts are bars rendered as 30px outlines with a 10% fill; they
   read as placeholders.
 approach: "how: tdd skill red→green on bar-chart.test.tsx via initialDimension (SF-1); consume chart-theme + chart-chrome"
-status: todo
+status: done
 track: Wrappers
 validation_tier: standard
 blocked_by: [chart-ux-area]
@@ -63,6 +63,8 @@ In `components/ui/bar-chart.tsx`:
 - `grep -nE "fillOpacity=\{0\.1\}|barSize=|#[0-9a-fA-F]{6}|interface ChartDataItem" components/ui/bar-chart.tsx` returns nothing.
 
 ## Log
+
+- 2026-09-30 — done, prism PASS (standard). Red `c5c681e` (6/6 fail on assertions vs the old `bar-chart.tsx`) → green `9edbae0`: solid `seriesColor` fills (no stroke, no 10% opacity), radius `[6,6,0,0]` horizontal / `[0,6,6,0]` vertical (exactly two `A 6,6` arcs per bar), `maxBarSize` 48 replaces `barSize`, hover emphasis via `onMouseMove` active index → per-bar `<Cell fillOpacity>` (1 / 0.55; Cells keep the series fill), `ChartTooltip`/`ChartLegend`/`ChartFrame`, `buildChartSummary(kind: "categorical")` so every `name: value` is in the aria-label, `isAnimationActive={prefersReducedMotion ? false : undefined}`. Additive props only (`ariaLabel?`, `initialDimension?`); `Dashboard.tsx` untouched. Beyond spec (accepted): the `layout="vertical"` axes now swap correctly (the old code put `dataKey=index` on XAxis even then) — no Dashboard call site uses vertical. Prism read Recharts 2.15.4 source for the hover path (no stale dim, no render loop) and mutation-tested (9 killed; survivors were things the Done-check does not require). Post-verdict: `d`-commit drops Recharts' default `#ccc` stroke on the hover band (`stroke: "none"`) and pins `maxBarSize`. Residual (live pass in chart-ux-verify): real hover, vertical-layout corner placement (implementation verified by probe, not test-guarded), negative values in vertical layout (no call site).
 
 ## Decisions
 
