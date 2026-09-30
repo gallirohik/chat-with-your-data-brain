@@ -169,11 +169,11 @@ build-tooling / routing region and are NOT in this plan's scope — tracked as i
 
 ## Decisions
 
-- (atlas, pending owner approval) Extend wrappers over Tremor/shadcn — see ADR.
-- (atlas, pending owner approval) `role="img"` + a data-bearing `aria-label` over Recharts
+- (owner-approved) Extend wrappers over Tremor/shadcn — see ADR.
+- (owner-approved) `role="img"` + a data-bearing `aria-label` over Recharts
   `accessibilityLayer` keyboard navigation; `ariaLabel` props are title prefixes, never
   replacements of the generated summary.
-- (atlas, pending owner approval) Optional `initialDimension` pass-through on the wrappers as
+- (owner-approved) Optional `initialDimension` pass-through on the wrappers as
   the test seam (SF-1) rather than testing Recharts internals or exporting private sub-components.
 - (prism round 2, applied) `isAnimationActive` never explicit `true` (SSR-aware default
   kept); legend assertions scoped to `data-slot="chart-legend"`; `ariaLabel`-as-title-prefix

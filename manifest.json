@@ -1,10 +1,22 @@
 {
   "schemaVersion": 1,
   "mode": "branch",
-  "codeSha": "59c84f7c94713a5745d9e64bd57601fd5f777005",
+  "codeSha": "2bdd777fb378d1c20732973886abbeecfe3290d4",
   "branch": "feat/chart-ux",
   "provenance": {
-    "agentCommits": 0
+    "agentCommits": 1,
+    "commitsCovered": [
+      "59c84f7c9471"
+    ],
+    "lastAgentRun": {
+      "at": "2026-09-30T05:03:13+05:30",
+      "codeSha": "2bdd777fb378d1c20732973886abbeecfe3290d4",
+      "actor": {
+        "model": "mechanical",
+        "agent": "cli@0.21.1",
+        "runner": "session"
+      }
+    }
   },
   "base": {
     "brainSha": "59c84f7c94713a5745d9e64bd57601fd5f777005"
@@ -1778,6 +1790,37 @@
     }
   ],
   "improvements": [
+    {
+      "id": "no-ci-gate",
+      "priority": "P2",
+      "category": "ops",
+      "lens": "ops",
+      "status": "open",
+      "title": "No CI - tests, type-check and build never run on push or PR",
+      "summary": "The repo has no .github workflows or other CI config; pnpm test, check-types and build only run when someone remembers to run them locally",
+      "fix": "Add a minimal GitHub Actions workflow: pnpm install --frozen-lockfile, pnpm check-types, pnpm test, pnpm build",
+      "leverage": {
+        "impact": "high",
+        "effort": "low"
+      },
+      "blastRadius": [],
+      "cites": [
+        {
+          "file": "package.json",
+          "line": "8",
+          "token": "\"test\""
+        },
+        {
+          "file": "package.json",
+          "line": "10",
+          "token": "tsc --noEmit"
+        }
+      ],
+      "path": "improve/improvements/no-ci-gate.md",
+      "provenance": {
+        "baseBrainSha": "59c84f7c94713a5745d9e64bd57601fd5f777005"
+      }
+    },
     {
       "id": "source-text-tests-brittle",
       "priority": "P3",
