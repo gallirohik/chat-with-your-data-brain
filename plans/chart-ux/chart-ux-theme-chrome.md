@@ -12,7 +12,7 @@ description: >-
   legend formatter; the frame gives every chart a text alternative so colour is never the
   only encoding.
 approach: "how: tdd skill red→green; frontend-design skill for the visual pass, brain tokens win over its defaults"
-status: todo
+status: done
 track: Theme
 validation_tier: standard
 blocked_by: [chart-ux-theme-core]
@@ -55,5 +55,7 @@ Create `components/ui/chart-chrome.tsx` (`"use client"` not required — render-
 - `grep -nE "bg-white|gray-[0-9]|#[0-9a-fA-F]{6}" components/ui/chart-chrome.tsx` returns nothing.
 
 ## Log
+
+- 2026-09-30 — done, prism PASS (standard tier, round 2). Red `c8c2bea` (module missing) → green `a3f923e`: `components/ui/chart-chrome.tsx` (`ChartTooltip`, `ChartLegend` with `data-slot="chart-legend"`, `ChartFrame` `<figure role="img">`), test appended to `scripts.test`; token classes only (`bg-popover`, `text-popover-foreground`, `text-muted-foreground`, `border` — `--popover` already mapped in `@theme inline`). Round 1 ITERATE: Recharts 2.15.4 Pie tooltip entries carry NO `color` (`Pie.js:531-537`; the Cell fill is merged onto `entry.payload.fill`, `Pie.js:447-449`), so the spec's own "background: <entry.color>" would have shown an invisible swatch on the donut. Fixed red-first (`0179c91` → `970cf96`): `entry.color ?? entry.payload?.fill`; `d35da84` pins that `color` wins over `payload.fill` (an Area/Bar data row can have a column named `fill`). ChartLegend values come from `entry.payload.value`, which only Pie legend entries carry (documented; intended for the donut). Prism mutation-tested 11 mutants, all killed. Surprise: the plan spec's wording was the root cause of I-1. Residual: pie tooltip colour proven against a hand-built payload + Recharts source, not a live hover — chart-ux-verify's browser pass covers it.
 
 ## Decisions
