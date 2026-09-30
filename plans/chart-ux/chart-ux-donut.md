@@ -11,7 +11,7 @@ description: >-
   The category donut draws 3px outlined slices over a 10% fill with centre text that
   competes with the ring; it reads as unfinished.
 approach: "how: tdd skill red→green on pie-chart.test.tsx via initialDimension (SF-1); consume chart-theme + chart-chrome"
-status: todo
+status: done
 track: Wrappers
 validation_tier: standard
 blocked_by: [chart-ux-bar]
@@ -67,5 +67,7 @@ In `components/ui/pie-chart.tsx` (API stays `category` singular + `index`):
 - `grep -nE "fillOpacity=\{0\.1\}|#[0-9a-fA-F]{6}|interface ChartDataItem|innerRadius \|\|" components/ui/pie-chart.tsx` returns nothing.
 
 ## Log
+
+- 2026-09-30 — done, prism PASS (standard). Red `9151955` (6/6 fail on assertions vs the old `pie-chart.tsx`) → green `af238b4`: solid token slices separated by a 2px `var(--card)` stroke + `cornerRadius` 4 (the gap is background, not an outline; with `paddingAngle={0}` the two adjacent 1px half-strokes give a symmetric 2px gap), centre `<Label>` (`centerValue` larger over the `centerText` caption, only when `innerRadius > 0`), hover growth via `activeIndex`/`activeShape` (+4px outer radius, keeps fill/stroke/cornerRadius), legend WITH values (Pie legend entries carry `payload.value`), `ChartFrame` label via `buildChartSummary(kind: "categorical", categories: [category])` so all 5 `name: value%` are in the aria-label, `isAnimationActive={prefersReducedMotion ? false : undefined}`, `?? ` instead of `||` in `DonutChart` (sole call site passes `innerRadius={45}`, `outerRadius="90%"`). Additive props only (`centerValue?`, `ariaLabel?`, `initialDimension?`); `Dashboard.tsx` untouched. Prism mutation-tested 14 (13 killed; the survivor was `??`→`||`, now pinned by a behaviour test whose mutant exits 1). Post-verdict: the per-slice percent label (`showLabel`, off in DonutChart, on by default in PieChart) used hard-coded `fill="white"` — now `var(--card)`. Verified by reading Recharts 2.15.4: our `onMouseEnter` is merged with the chart's own handlers, hover does not re-animate or remount slices, and the centre label's viewBox comes from the computed polar `cx`/`cy` on the client too. Residual (live pass in chart-ux-verify): real hover interaction, gap visibility and label contrast on screen, hydration.
 
 ## Decisions
