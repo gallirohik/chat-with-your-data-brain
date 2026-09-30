@@ -11,7 +11,7 @@ description: >-
   The Sales Overview area chart is the screenshot's main complaint: 10%-opacity washes with
   hard outlines and a white bordered tooltip.
 approach: "how: tdd skill red→green on area-chart.test.tsx via initialDimension (SF-1); consume chart-theme + chart-chrome"
-status: todo
+status: done
 track: Wrappers
 validation_tier: standard
 blocked_by: [chart-ux-theme-core, chart-ux-theme-chrome]
@@ -56,6 +56,8 @@ In `components/ui/area-chart.tsx`:
 - `grep -nE "fillOpacity=\{0\.1\}|#[0-9a-fA-F]{6}|interface ChartDataItem" components/ui/area-chart.tsx` returns nothing.
 
 ## Log
+
+- 2026-09-30 — done, prism PASS (standard). Red `90d0611` (6/6 fail on assertions vs the old `area-chart.tsx`) → green `1e2aa94`: `AreaChart` consumes `chart-theme` + `chart-chrome` — per-series `<linearGradient>` (opacity 0.35→0.02, id `chartGradientId(useId(), category)`, valid in `url(#…)` and hydration-stable), 2px stroke, `activeDot` r=4 with a `var(--card)` ring, dashed `CURSOR_STROKE` cursor, `ChartTooltip`/`ChartLegend`, `ChartFrame` with `buildChartSummary({title: ariaLabel, kind: "series"})`; additive props `ariaLabel?`, `initialDimension?`; `isAnimationActive={prefersReducedMotion ? false : undefined}`. `Dashboard.tsx` untouched and byte-identical to main. Prism mutation-tested 17 mutants (15 killed); tests tightened after (every gradient stop carries the series colour; title-prefix test uses a non-overlapping title and asserts `Series: Sales, Profit`). Unspecified but accepted: chart margin 10→(4/8/0/0) and XAxis `dy=10`→`tickMargin=8`. Residual (live pass in chart-ux-verify): hover ring/cursor, real rendered height inside `h-60`, visual effect of the margin change, and an explicit `isAnimationActive={true}` is not test-guarded for area (SF-1: Area renders the same under SSR either way).
 
 ## Decisions
 

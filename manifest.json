@@ -4,9 +4,10 @@
   "codeSha": "07630e5c034853c4ccdc9dc58d8c79eb1abaebde",
   "branch": "feat/chart-ux",
   "provenance": {
-    "agentCommits": 12,
+    "agentCommits": 13,
     "commitsCovered": [
       "0179c91949fb",
+      "07630e5c0348",
       "1e2aa94025ec",
       "2bdd777fb378",
       "549531b8b911",
