@@ -1,6 +1,5 @@
 ---
 schemaVersion: 1
-type: Improvement
 id: hardcoded-conversion-rate-kpi
 priority: P2
 category: product
@@ -13,7 +12,7 @@ blast_radius: [data-ops, agent-runtime]
 cites:
   - data/dashboard-data.ts:225 :: 8.13
   - components/Dashboard.tsx:53 :: conversionRate
-  - components/Dashboard.tsx:110 :: Conversion Rate
+  - components/Dashboard.tsx:111 :: Conversion Rate
 ---
 # Hard-coded conversion rate
 

@@ -1,6 +1,5 @@
 ---
 schemaVersion: 1
-type: Improvement
 id: source-text-tests-brittle
 priority: P3
 category: architecture

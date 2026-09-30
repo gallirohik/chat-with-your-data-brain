@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "mode": "branch",
-  "codeSha": "c68c6432e948597cfbdf7e21886c1ec8f27378b8",
+  "codeSha": "55c88df4f2787f5c35f3758b1027dbe6c157dfb2",
   "branch": "feat/chart-ux",
   "provenance": {
     "agentCommits": 20,
@@ -29,7 +29,7 @@
     ],
     "lastAgentRun": {
       "at": "2026-09-30T19:09:25+05:30",
-      "codeSha": "c68c6432e948597cfbdf7e21886c1ec8f27378b8",
+      "codeSha": "55c88df4f2787f5c35f3758b1027dbe6c157dfb2",
       "actor": {
         "model": "mechanical",
         "agent": "cli@0.21.1",
@@ -358,7 +358,7 @@
         },
         {
           "file": "components/Dashboard.tsx",
-          "line": "87",
+          "line": "88",
           "token": "grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
         },
         {
@@ -894,7 +894,7 @@
       "cites": [
         {
           "file": "components/Dashboard.tsx",
-          "line": "30",
+          "line": "31",
           "token": "export function Dashboard"
         },
         {
@@ -1872,7 +1872,7 @@
         },
         {
           "file": "components/Dashboard.tsx",
-          "line": "110",
+          "line": "111",
           "token": "Conversion Rate"
         }
       ],
