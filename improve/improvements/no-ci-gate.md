@@ -1,5 +1,6 @@
 ---
 schemaVersion: 1
+type: Improvement
 id: no-ci-gate
 priority: P2
 category: ops
