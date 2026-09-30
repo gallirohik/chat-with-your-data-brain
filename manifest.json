@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "mode": "branch",
-  "codeSha": "624b2cf52a7e6eda924f5225d5430df98b786366",
+  "codeSha": "c8c2beae84fdba356e8d4296b4c03a2ad613c9d8",
   "branch": "feat/chart-ux",
   "provenance": {
     "agentCommits": 5,
@@ -14,7 +14,7 @@
     ],
     "lastAgentRun": {
       "at": "2026-09-30T18:50:35+05:30",
-      "codeSha": "624b2cf52a7e6eda924f5225d5430df98b786366",
+      "codeSha": "c8c2beae84fdba356e8d4296b4c03a2ad613c9d8",
       "actor": {
         "model": "mechanical",
         "agent": "cli@0.21.1",
@@ -1794,6 +1794,42 @@
     }
   ],
   "improvements": [
+    {
+      "id": "dark-mode-inert",
+      "priority": "P3",
+      "category": "product",
+      "lens": "product",
+      "status": "open",
+      "title": "Dark-mode tokens and dark: classes ship but nothing ever enables dark mode",
+      "summary": "globals.css defines a .dark token block and a dark custom variant, and components carry dark: classes, but no code adds the dark class and no theme library is installed",
+      "fix": "Decide: wire a toggle (or prefers-color-scheme) that sets the dark class, or delete the .dark block and dark: classes",
+      "leverage": {
+        "impact": "low",
+        "effort": "medium"
+      },
+      "blastRadius": [],
+      "cites": [
+        {
+          "file": "app/globals.css",
+          "line": "48",
+          "token": ".dark {"
+        },
+        {
+          "file": "app/globals.css",
+          "line": "5",
+          "token": "@custom-variant dark"
+        },
+        {
+          "file": "components/generative-ui/SearchResults.tsx",
+          "line": "55",
+          "token": "dark:bg-gray-800"
+        }
+      ],
+      "path": "improve/improvements/dark-mode-inert.md",
+      "provenance": {
+        "baseBrainSha": "59c84f7c94713a5745d9e64bd57601fd5f777005"
+      }
+    },
     {
       "id": "no-ci-gate",
       "priority": "P2",
