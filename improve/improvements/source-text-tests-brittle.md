@@ -1,7 +1,6 @@
 ---
 schemaVersion: 1
 id: source-text-tests-brittle
-type: Improvement
 priority: P3
 category: architecture
 status: open

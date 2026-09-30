@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "mode": "branch",
-  "codeSha": "bea490339ecc4a3325ad2cb85b67cdc16340fdfc",
+  "codeSha": "c68c6432e948597cfbdf7e21886c1ec8f27378b8",
   "branch": "feat/chart-ux",
   "provenance": {
     "agentCommits": 19,
@@ -28,7 +28,7 @@
     ],
     "lastAgentRun": {
       "at": "2026-09-30T19:09:25+05:30",
-      "codeSha": "bea490339ecc4a3325ad2cb85b67cdc16340fdfc",
+      "codeSha": "c68c6432e948597cfbdf7e21886c1ec8f27378b8",
       "actor": {
         "model": "mechanical",
         "agent": "cli@0.21.1",
@@ -712,8 +712,8 @@
           "token": "Sales:"
         },
         {
-          "file": "components/ui/area-chart.tsx",
-          "line": "15",
+          "file": "components/ui/chart-theme.ts",
+          "line": "11",
           "token": "interface ChartDataItem"
         }
       ],
@@ -737,8 +737,8 @@
       ],
       "cites": [
         {
-          "file": "components/ui/area-chart.tsx",
-          "line": "15",
+          "file": "components/ui/chart-theme.ts",
+          "line": "11",
           "token": "interface ChartDataItem"
         },
         {
@@ -747,8 +747,8 @@
           "token": "ChartDataItem[]"
         },
         {
-          "file": "components/ui/bar-chart.tsx",
-          "line": "15",
+          "file": "components/ui/chart-theme.ts",
+          "line": "11",
           "token": "interface ChartDataItem"
         },
         {
@@ -757,8 +757,8 @@
           "token": "ChartDataItem[]"
         },
         {
-          "file": "components/ui/pie-chart.tsx",
-          "line": "14",
+          "file": "components/ui/chart-theme.ts",
+          "line": "11",
           "token": "interface ChartDataItem"
         },
         {
@@ -772,8 +772,8 @@
           "token": "export function AreaChart"
         },
         {
-          "file": "components/ui/pie-chart.tsx",
-          "line": "138",
+          "file": "components/ui/area-chart.tsx",
+          "line": "115",
           "token": "fillOpacity={0.1}"
         },
         {
@@ -783,7 +783,7 @@
         },
         {
           "file": "components/ui/pie-chart.tsx",
-          "line": "176",
+          "line": "215",
           "token": "export function DonutChart"
         },
         {
@@ -1840,6 +1840,42 @@
         }
       ],
       "path": "improve/improvements/dark-mode-inert.md",
+      "provenance": {
+        "baseBrainSha": "59c84f7c94713a5745d9e64bd57601fd5f777005"
+      }
+    },
+    {
+      "id": "hardcoded-conversion-rate-kpi",
+      "priority": "P2",
+      "category": "product",
+      "lens": "product",
+      "status": "open",
+      "title": "Conversion Rate KPI is a hard-coded constant presented as derived data",
+      "summary": "calculateConversionRate divides customers by customers*8.13, so it always shows about 12.3% - and that fabricated figure is shown as a KPI tile and fed to the agent as a metric",
+      "fix": "Either add a visitors series to the dataset and compute it, or relabel the tile and agent-context field as an assumed rate (or drop it)",
+      "leverage": {
+        "impact": "medium",
+        "effort": "low"
+      },
+      "blastRadius": [],
+      "cites": [
+        {
+          "file": "data/dashboard-data.ts",
+          "line": "225",
+          "token": "8.13"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "53",
+          "token": "conversionRate"
+        },
+        {
+          "file": "components/Dashboard.tsx",
+          "line": "110",
+          "token": "Conversion Rate"
+        }
+      ],
+      "path": "improve/improvements/hardcoded-conversion-rate-kpi.md",
       "provenance": {
         "baseBrainSha": "59c84f7c94713a5745d9e64bd57601fd5f777005"
       }
