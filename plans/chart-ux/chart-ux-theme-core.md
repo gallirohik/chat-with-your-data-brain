@@ -13,7 +13,7 @@ description: >-
   (measured vs white --card: 3.59 / 3.66 / 9.12 / 1.72 / 2.15) and --chart-4/--chart-5 are
   near-identical ambers, so the retune is required, not optional.
 approach: "how: tdd skill (.agents/skills/tdd) red→green on chart-theme.test.ts; the palette gate is an in-test oklch→WCAG contrast + OKLab distance check parsed from app/globals.css"
-status: todo
+status: done
 track: Theme
 validation_tier: full
 priority: 2
@@ -97,6 +97,8 @@ in sRGB gamut): `oklch(0.55 0.2 260)` blue 5.02:1 · `oklch(0.58 0.1 185)` teal 
   `pnpm test`, `pnpm check-types`, `pnpm build` exit 0.
 
 ## Log
+
+- 2026-09-30 — done, prism PASS (full tier). Red `a1a06df` (test imports missing module; with the module present but the original palette, the palette gate alone fails: `--chart-4` 1.72:1, `--chart-5` 2.15:1, min ΔE_ok 0.075, `--chart-1/2/4/5` outside sRGB gamut). Green `549531b`: `components/ui/chart-theme.ts` + `:root --chart-1..5` retuned to the plan's verified palette (5.02/4.07/6.66/3.83/4.96, min ΔE_ok 0.138, all in gamut), `.dark` byte-identical to main, test appended to `scripts.test`. `2bdd777` pins `@rafinery/cli` 0.21.1 (only lockfile delta). Prism re-ran green live and red in a worktree, recomputed the palette independently, mutation-tested 7 mutants (all killed) and fuzzed `chartGradientId` (300k, 0 collisions). Surprise: three of the five ORIGINAL tokens were outside the sRGB gamut, so the browser was gamut-mapping them anyway. Prism Minor 1+4 fixed in `624b2cf` with a red-first test: empty-string cells no longer read as 0 in long-series min/max, and min/max uses a loop instead of spread. Residual (only provable live, in chart-ux-verify): the `matchMedia` subscription and on-screen contrast after browser gamut mapping.
 
 ## Decisions
 
