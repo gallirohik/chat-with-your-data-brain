@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "mode": "branch",
-  "codeSha": "7cf52d7628b5293a69a02562c8807337eae3155e",
+  "codeSha": "91519551b4a5e5ebba267d38b1ee92f835cd2a47",
   "branch": "feat/chart-ux",
   "provenance": {
     "agentCommits": 16,
@@ -25,7 +25,7 @@
     ],
     "lastAgentRun": {
       "at": "2026-09-30T19:09:25+05:30",
-      "codeSha": "7cf52d7628b5293a69a02562c8807337eae3155e",
+      "codeSha": "91519551b4a5e5ebba267d38b1ee92f835cd2a47",
       "actor": {
         "model": "mechanical",
         "agent": "cli@0.21.1",
@@ -769,8 +769,8 @@
           "token": "export function AreaChart"
         },
         {
-          "file": "components/ui/area-chart.tsx",
-          "line": "115",
+          "file": "components/ui/pie-chart.tsx",
+          "line": "138",
           "token": "fillOpacity={0.1}"
         },
         {
