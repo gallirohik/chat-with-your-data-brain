@@ -13,7 +13,7 @@ description: >-
   right next to the chart-data-key contract, hence full tier. The only leaf that edits
   Dashboard.tsx.
 approach: "how: frontend-design skill for header rhythm; chart-data-key guard via git diff; brain tokens win"
-status: todo
+status: done
 track: Composition
 validation_tier: full
 blocked_by: [chart-ux-area, chart-ux-bar, chart-ux-donut]
@@ -56,5 +56,7 @@ In `components/Dashboard.tsx` (this is the ONLY leaf that edits it):
   distinct colours — screenshot attached to the Log.
 
 ## Log
+
+- 2026-09-30 — done, prism PASS (full tier). `c68c643` edits ONLY `components/Dashboard.tsx`: the hex `colors` map is gone (Area/Donut use `CHART_PALETTE` order by default; the three single-series bars each get a different token — `barColors.productPerformance = CHART_PALETTE[2]` (`var(--chart-3)`, violet 6.66:1), `regional = [1]` (`var(--chart-2)`, teal 4.07:1), `demographics = [3]` (`var(--chart-4)`, amber 3.83:1)); `ariaLabel` = the card title on all five charts; donut `centerValue={String(categoryData.length)}` ("5 / Categories"); card headers `text-sm font-medium` / `text-xs text-muted-foreground`, Card `gap-3 py-4` (tailwind-merge replaces the primitive's `gap-6 py-6`). No data prop changed: prism read the whole diff — `data=`/`index=`/`categories=`/`category=` are byte-identical and each card still renders the same chart type on the same dataset (the regex guard alone cannot see a card↔chart swap, so the diff was read by eye). `h-60` ×5, `ariaLabel=` ×5, no hex, `useAgentContext`/`useRenderTool`/KPI markup untouched. Live check (the Done-check's screenshot line): prism rendered the production build in the already-installed Chrome at 1280px — five non-empty charts, fills `var(--chart-N)` resolve, aria-labels = title + data rows. Observed by eye in that screenshot (with the CopilotKit sidebar open): the bar charts drop x-axis category labels (Product Performance shows 3 of 5, Regional Sales 2 of 5) because Recharts' default tick interval hides overlapping labels — pre-existing behaviour, routed to chart-ux-verify. Residual: dark mode not rendered (`.dark` inert); dark `--chart-1` is 2.89:1 vs dark `--card` by calculation and predates this plan (dark-mode-inert, P3).
 
 ## Decisions
