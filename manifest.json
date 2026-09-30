@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "mode": "branch",
-  "codeSha": "07630e5c034853c4ccdc9dc58d8c79eb1abaebde",
+  "codeSha": "c5c681e0c1a96b1968acf550962042ca59a71cee",
   "branch": "feat/chart-ux",
   "provenance": {
     "agentCommits": 13,
@@ -22,7 +22,7 @@
     ],
     "lastAgentRun": {
       "at": "2026-09-30T19:09:25+05:30",
-      "codeSha": "07630e5c034853c4ccdc9dc58d8c79eb1abaebde",
+      "codeSha": "c5c681e0c1a96b1968acf550962042ca59a71cee",
       "actor": {
         "model": "mechanical",
         "agent": "cli@0.21.1",
@@ -762,7 +762,7 @@
         },
         {
           "file": "components/ui/area-chart.tsx",
-          "line": "33",
+          "line": "46",
           "token": "export function AreaChart"
         },
         {
